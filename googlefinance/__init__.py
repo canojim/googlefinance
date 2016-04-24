@@ -37,9 +37,16 @@ def buildUrl(symbols):
     return 'http://finance.google.com/finance/info?client=ig&q=' \
         + symbol_list
 
-def buildNewsUrl(symbol, qs='&start=0&num=1000'):
-   return 'http://www.google.com/finance/company_news?output=json&q=' \
-        + symbol + qs
+def buildNewsUrl(symbol, qs='',startdate='',enddate=''):
+    baseurl = 'http://www.google.com/finance/company_news?output=json&q='+symbol+qs
+
+    if startdate :
+        baseurl = baseurl + "&startdate="+startdate
+
+    if enddate :
+        baseurl = baseurl + "&enddate="+enddate
+
+    return baseurl
 
 def request(symbols):
     url = buildUrl(symbols)
@@ -50,8 +57,8 @@ def request(symbols):
     content = content[3:]
     return content
 
-def requestNews(symbol):
-    url = buildNewsUrl(symbol)
+def requestNews(symbol,startdate='',enddate=''):
+    url = buildNewsUrl(symbol,'&start=0&num=1000',startdate,enddate)
     print "url: ", url
     req = Request(url)
     resp = urlopen(req)
@@ -104,8 +111,8 @@ def getQuotes(symbols):
     content = json.loads(request(symbols))
     return replaceKeys(content);
 
-def getNews(symbol):
-    return requestNews(symbol);
+def getNews(symbol,startdate='',enddate=''):
+    return requestNews(symbol,startdate,enddate);
 
 if __name__ == '__main__':
     try:
